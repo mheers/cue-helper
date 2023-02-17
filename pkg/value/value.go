@@ -54,7 +54,7 @@ func Replace(v cue.Value, path string, value interface{}) (cue.Value, error) {
 
 	ex := v.LookupPath(p)
 	if !ex.Exists() {
-		return cue.Value{}, fmt.Errorf("path %s not found", path)
+		return Set(v, path, value)
 	}
 
 	emptyBase := v.Context().CompileString(fmt.Sprintf(`{ %s: [...] }`, strings.ReplaceAll(path, ".", ":")))
