@@ -1,0 +1,4 @@
+sums: {
+	"github.com/mheers/ocigateway/config": "v0.0.0-20210914104905-8b9b8b0b9b0a": ["h1:EiCdZe2ZefkgHe8TdFvmFJsy6W1cH//WlY+GLXuiSCE="]
+	"github.com/mheers/ocigateway/config": "v0.0.0-20210914104905-8b9b8b0b9b0a/cue.mods": ["h1:0ceEZQ99OlpDYzKzMLFNjYr3pVJFTznJNolH40/JW2Y="]
+}

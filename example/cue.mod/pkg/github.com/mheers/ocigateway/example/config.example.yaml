@@ -1,0 +1,83 @@
+version: "2.0"
+log: {}
+storage: ""
+
+http:
+  addr: :5000
+
+cacheDir: /tmp/demo/cache
+
+logLevel: debug
+logFormat: json
+
+gateways:
+  - name: my-local-fs
+    type: file
+    rootDir: /tmp/demo/
+
+  - name: my-http
+    type: http
+    baseURL: http://localhost:8090/
+    username: user
+    password: pass
+    insecure: false
+
+  - name: my-s3
+    type: s3
+    endpoint: localhost:9000
+    accessKeyID: gw1234
+    secretAccessKey: gwpw1234
+    useSSL: false
+
+  - name: my-docker
+    type: docker
+
+  - name: my-git-imagesumdb
+    type: git
+    repoURL: https://github.com/mheers/imagesumdb.git
+    insecure: false
+
+  - name: my-gitea-demo
+    type: git
+    repoURL: http://localhost:3000/gitea_admin/pangular.git
+    username: gitea_admin # not relevant - can be any non empty string
+    password: admin
+
+  - name: my-ftp-demo
+    type: ftp
+    host: localhost
+    port: 21
+    username: user
+    password: password
+    insecure: true
+    basePath: /
+
+  - name: my-nfs-demo
+    type: nfs
+    host: localhost
+    username: user
+    password: password
+    insecure: true
+    basePath: /
+
+  - name: my-sftp-demo
+    type: sftp
+    host: localhost
+    port: 2244
+    username: root
+    insecure: true
+    sshKeyFile: gateway/sftp/test/id_rsa
+    basePath: /tmp/oci-gateway-sftp-test/
+
+  - name: my-smb-demo
+    type: smb
+    host: localhost
+    port: 445
+    username: alice
+    password: alipass
+
+  - name: my-vault-demo
+    type: vault
+    endpoint: http://localhost:8200
+    token: root
+    basePath: kv
