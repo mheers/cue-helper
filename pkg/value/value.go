@@ -57,7 +57,19 @@ func Replace(v cue.Value, path string, value interface{}) (cue.Value, error) {
 		return Set(v, path, value)
 	}
 
-	emptyBase := v.Context().CompileString(fmt.Sprintf(`{ %s: [...] }`, strings.ReplaceAll(path, ".", ":")))
+	var empytValue string
+	switch value.(type) {
+	case string:
+		empytValue = `string`
+	case int:
+		empytValue = `int`
+	case float64:
+		empytValue = `number`
+	default:
+		empytValue = "[...]"
+	}
+
+	emptyBase := v.Context().CompileString(fmt.Sprintf(`{ %s: %s }`, strings.ReplaceAll(path, ".", ":"), empytValue))
 	n := emptyBase.FillPath(p, value)
 
 	ret, err := sets.StrategyUnify(v, n, sets.UnifyByJSONMergePatch{})
