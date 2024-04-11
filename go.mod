@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	cuelang.org/go v0.7.0
+	github.com/AsaiYusuke/jsonpath v1.6.0
 	github.com/kubevela/workflow v0.6.0
 	github.com/stretchr/testify v1.8.4
 )

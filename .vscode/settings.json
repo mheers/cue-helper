@@ -1,0 +1,6 @@
+{
+    "go.testFlags": [
+        "-vet=off",
+        "-v"
+    ],
+}

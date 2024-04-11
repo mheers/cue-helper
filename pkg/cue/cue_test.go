@@ -1,9 +1,13 @@
 package cue
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
+	"cuelang.org/go/cue"
+	"github.com/AsaiYusuke/jsonpath"
+	"github.com/kubevela/workflow/pkg/cue/model/sets"
 	"github.com/stretchr/testify/require"
 )
 
@@ -65,6 +69,12 @@ func TestGetFloat(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 25.7, result)
 }
+func TestGetIndex(t *testing.T) {
+	var result string
+	err := Get(v, "certManager.rootCertificates[0].name", &result)
+	require.NoError(t, err)
+	require.Equal(t, "test1", result)
+}
 
 func TestReplaceString(t *testing.T) {
 	v2, err := Replace(v, "user", "new")
@@ -87,6 +97,15 @@ func TestReplaceList(t *testing.T) {
 	require.Equal(t, "456", result[1])
 }
 
+func TestReplaceValueInList(t *testing.T) {
+	v2, err := Replace(v, "certManager.rootCertificates[0].name", "test2")
+	require.NoError(t, err)
+
+	var result string
+	err = Get(v2, "certManager.rootCertificates[0].name", &result)
+	require.NoError(t, err)
+	require.Equal(t, "test2", result)
+}
 func TestReplaceInt(t *testing.T) {
 	v2, err := Replace(v, "age", 36)
 	require.NoError(t, err)
@@ -105,4 +124,43 @@ func TestReplaceFloat(t *testing.T) {
 	err = Get(v2, "temperature", &result)
 	require.NoError(t, err)
 	require.Equal(t, 12.4, result)
+}
+
+func TestDev(t *testing.T) {
+	path := "certManager.rootCertificates[0].name"
+	p := cue.ParsePath(path)
+
+	v1, err := StringToCueValue(string(v))
+	require.NoError(t, err)
+	jsV, err := v1.MarshalJSON()
+	require.NoError(t, err)
+
+	var value = "marcel"
+
+	empytValue := `string`
+
+	v1.LookupPath(p)
+
+	// s := fmt.Sprintf(`{ %s: %s }`, strings.ReplaceAll(path, ".", ":"), empytValue)
+	s := fmt.Sprintf(`{ certManager:rootCertificates:[{name: %s}] }`, empytValue)
+	fmt.Println(s)
+	emptyBase := v1.Context().CompileString(s)
+	n := emptyBase.FillPath(p, value)
+
+	js, err := n.MarshalJSON()
+	require.NoError(t, err)
+	fmt.Println(string(js))
+
+	ret, err := sets.StrategyUnify(v1, n, sets.UnifyByJSONMergePatch{})
+	require.NoError(t, err)
+	jsRet, err := ret.MarshalJSON()
+	require.NoError(t, err)
+	fmt.Println(string(jsV))
+	fmt.Println(string(jsRet))
+}
+
+func TestJSONPath(t *testing.T) {
+	f, err := jsonpath.Parse("certManager.rootCertificates[0].name")
+	require.NoError(t, err)
+	require.NotNil(t, f)
 }
